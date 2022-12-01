@@ -69,15 +69,15 @@ notesl = input("har du någon note för slöjden? ")
 
 rester = input("har du några rester (ja eller nej)")
 if rester == "ja":
-    vad1 = input("vad för rester har du? ")
-    när1 = input("när ska du göra dem? ")
-    hur1 = input("hur ska du göra dem? ")
+    vad1 = input("Vad för rester har du? ")
+    när1 = input("När ska du göra dem? ")
+    hur1 = input("Hur ska du göra dem? ")
     vad2 = input("vad för rester har du? ")
-    när2 = input("när ska du göra dem? ")
-    hur2 = input("hur ska du göra dem? ")
-    vad3 = input("vad för rester har du? ")
-    när3 = input("när ska du göra dem? ")
-    hur3 = input("hur ska du göra dem? ")
+    när2 = input("När ska du göra dem? ")
+    hur2 = input("Hur ska du göra dem? ")
+    vad3 = input("Vad för rester har du? ")
+    när3 = input("När ska du göra dem? ")
+    hur3 = input("Hur ska du göra dem? ")
 else:
     vad1 = " "
     hur1 = " "
@@ -95,7 +95,7 @@ hend = input("Har ni något som kommer hända (ja eller nej)? ")
 if hend == "ja":
     henvad1 = input("Vad ska ni göra? ")
     hendnär1 = input("När ska ni göra det? ")
-    hendvad2 = input("vad för rester har du? ")
+    hendvad2 = input("Vad ska ni göra? ")
     hendnär2 = input("När ska ni göra det? ")
     hendvad3 = input("Vad ska ni göra? ")
     hendnär3 = input("När ska ni göra det? ")

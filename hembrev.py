@@ -8,7 +8,7 @@ dt = datetime.date.today()
 wk = dt.isocalendar()[1]
 document = Document()
 olApp = win32.Dispatch('Outlook.Application')
-number_of_tables = [1, 2, 3]
+
 
 
 config = configparser.ConfigParser()
@@ -202,7 +202,7 @@ mailItem = olApp.CreateItem(0)
 mailItem.Subject = 'Hembrev'
 mailItem.BodyFormat = 1
 mailItem.Body = "hembrev"
-mailItem.To = "liam@suorsa.se"
+mailItem.To = mail1, mail2, mail3, mail4, mail5
 
 
 mailItem.Attachments.Add(os.path.join(os.getcwd(), docname))

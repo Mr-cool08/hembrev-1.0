@@ -2,12 +2,16 @@ import datetime
 from docx import Document
 from docx.shared import Inches
 import os
-import win32com.client as win32
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email import encoders
 import configparser
 dt = datetime.date.today()
 wk = dt.isocalendar()[1]
 document = Document()
-olApp = win32.Dispatch('Outlook.Application')
+
 
 
 
@@ -18,6 +22,8 @@ mail2 = config.get('Emails', 'email2')
 mail3 = config.get('Emails', 'Email3')
 mail4 = config.get('Emails', 'Email4')
 mail5 = config.get('Emails', 'Email5')
+mail = config.get('login', 'email')
+password = config.get('login', 'password')
 
 document.add_heading('Hembrev', 0)
 
@@ -69,12 +75,15 @@ notesl = input("har du någon note för slöjden? ")
 
 rester = input("har du några rester (ja eller nej)")
 if rester == "ja":
+    print("rest 1/3")
     vad1 = input("Vad för rester har du? ")
     när1 = input("När ska du göra dem? ")
     hur1 = input("Hur ska du göra dem? ")
+    print("rest 2/3")
     vad2 = input("vad för rester har du? ")
     när2 = input("När ska du göra dem? ")
     hur2 = input("Hur ska du göra dem? ")
+    print("rest 3/3")
     vad3 = input("Vad för rester har du? ")
     när3 = input("När ska du göra dem? ")
     hur3 = input("Hur ska du göra dem? ")
@@ -93,10 +102,13 @@ else:
     
 hend = input("Har ni något som kommer hända (ja eller nej)? ")
 if hend == "ja":
-    henvad1 = input("Vad ska ni göra? ")
+    print("händelse 1/3")
+    hendvad1 = input("Vad ska ni göra? ")
     hendnär1 = input("När ska ni göra det? ")
+    print("händelse 2/3")
     hendvad2 = input("Vad ska ni göra? ")
     hendnär2 = input("När ska ni göra det? ")
+    print("händelse 3/3")
     hendvad3 = input("Vad ska ni göra? ")
     hendnär3 = input("När ska ni göra det? ")
 else:
@@ -194,20 +206,28 @@ document.add_page_break()
 
 document.save('hembrev v' + str(wk) + ".docx")
 docname = 'hembrev v' + str(wk) + ".docx"
-olApp = win32.Dispatch('Outlook.Application')
-olNS = olApp.GetNameSpace('MAPI')
+msg = MIMEMultipart()
+msg['From'] = mail
+
+receivers = [mail1, mail2, mail3, mail4, mail5]
+msg['To'] = ', '.join(receivers)
+msg['Subject'] = 'hembrev v' + str(wk)
+body = 'hembrev v' + str(wk)
+msg.attach(MIMEText(body, 'plain'))
+
+## ATTACHMENT PART OF THE CODE IS HERE
+attachment = open(docname, 'rb')
+part = MIMEBase('application', "octet-stream")
+part.set_payload((attachment).read())
+encoders.encode_base64(part)
+part.add_header('Content-Disposition', "attachment; filename= %s" % docname)
+msg.attach(part)
 
 # construct the email item object
-mailItem = olApp.CreateItem(0)
-mailItem.Subject = 'Hembrev'
-mailItem.BodyFormat = 1
-mailItem.Body = "hembrev"
-mailItem.To = mail1, mail2, mail3, mail4, mail5
-
-
-mailItem.Attachments.Add(os.path.join(os.getcwd(), docname))
-
-mailItem.Display()
-
-mailItem.Save()
-mailItem.Send()
+server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
+server.ehlo()
+server.starttls()
+server.ehlo()
+server.login(mail, password)  ### if applicable
+server.send_message(msg)
+server.quit()

@@ -7,12 +7,13 @@ import requests
 isExist = os.path.exists('config.txt')
 
 
-Aemail = input("skriv ett av mailadresserna som ska få hembrevet: ")
-Bemail = input("skriv ett av mailadresserna som ska få hembrevet: ")
-Cemail = input("skriv ett av mailadresserna som ska få hembrevet: ")
-Demail = input("skriv ett av mailadresserna som ska få hembrevet: ")
-Eemail = input("skriv ett av mailadresserna som ska få hembrevet: ")
-
+Aemail = input("skriv 1/5 av mailadresserna som ska få hembrevet: ")
+Bemail = input("skriv 2/5 av mailadresserna som ska få hembrevet: ")
+Cemail = input("skriv 3/5 av mailadresserna som ska få hembrevet: ")
+Demail = input("skriv 4/5 av mailadresserna som ska få hembrevet: ")
+Eemail = input("skriv 5/5 av mailadresserna som ska få hembrevet: ")
+login = input("skriv din Email som du ska skicka från: ")
+password = input("skriv ditt lösenord för eposten (Detta är nödvändigt): ")
 
 
 config_object = ConfigParser()
@@ -25,6 +26,11 @@ config_object["Emails"] = {
     "email4": Demail,
     "email5": Eemail
 }
+config_object["login"] = {
+    "email1": login,
+    "password": password
+}
+
 
 
 
@@ -38,7 +44,7 @@ with open('config.ini', 'w') as conf:
     
     
 print("downloading...")
-image_url = "https://download1084.mediafire.com/sytyvyxs99fg/vevoqm8z5tip8vq/hembrev.exe"
+image_url = ""
   
 # URL of the image to be downloaded is defined as image_url
 r = requests.get(image_url) # create HTTP response object

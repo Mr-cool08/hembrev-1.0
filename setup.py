@@ -1,7 +1,7 @@
 import os
 from configparser import ConfigParser
 import os
-
+import time
 import requests
 
 isExist = os.path.exists('config.txt')
@@ -27,7 +27,7 @@ config_object["Emails"] = {
     "email5": Eemail
 }
 config_object["login"] = {
-    "email1": login,
+    "email": login,
     "password": password
 }
 
@@ -44,7 +44,7 @@ with open('config.ini', 'w') as conf:
     
     
 print("downloading...")
-image_url = ""
+image_url = "http://hembrev.ga"
   
 # URL of the image to be downloaded is defined as image_url
 r = requests.get(image_url) # create HTTP response object
@@ -60,5 +60,7 @@ with open("hembrev.exe",'wb') as f:
     # to a new file in binary mode.
     f.write(r.content)
 print("done")
+
+time.sleep(3)
 
 os.system("hembrev.exe")

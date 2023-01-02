@@ -6,9 +6,33 @@ import requests
 import os, winshell, win32com.client
 from pyunpack import Archive
 import wget
-isExist = os.path.exists('config.txt')
-
-if isExist == True: 
+from progress.bar import Bar
+import sys
+import shutil
+import urllib.request
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
+req = Request("https://hembrev-1.mrcoolcool.repl.co")
+print("testar servrarna...")
+try:
+    response = urlopen(req)
+except HTTPError as e:
+    print('Servern funkar inte just nu testa igen senare.')
+    print('Error code: ', e.code)
+    time.sleep(4)
+    sys.exit()
+    
+except URLError as e:
+    print('Servern funkar inte just nu testa igen senare.')
+    print('Reason: ', e.reason)
+    time.sleep(4)
+    sys.exit()
+    
+else:
+    print ('Servrarna funkar :)')
+isExist = os.path.exists('config.ini')
+user = os.getlogin()
+if isExist == False: 
     Aemail = input("skriv 1/5 av mailadresserna som ska få hembrevet: ")
     Bemail = input("skriv 2/5 av mailadresserna som ska få hembrevet: ")
     Cemail = input("skriv 3/5 av mailadresserna som ska få hembrevet: ")
@@ -43,60 +67,102 @@ if isExist == True:
 isExist = os.path.exists('hembrev.rar')
 if isExist == False:
     print("Laddar ner...")
-
-    wget.download("http://hembrev.ga")
-    
+    wget.download("https://hembrev-1.mrcoolcool.repl.co")
 # URL of the image to be downloaded is defined as image_url
     print(" ")
     print("Klar!")
 print(" ")
 
 print("Installerar...")
-user = os.getlogin()
-Archive('hembrev.rar').extractall(f"C:/Users/{user}/AppData/Roaming")
-# Directory 
-desktop = winshell.desktop()
+bar = Bar('Processing', max=26)
+for i in range(1):
+    Archive('hembrev.rar').extractall(f"C:/Users/{user}/AppData/Roaming")
+    bar.next()
+    try:
+        shutil.move("config.ini", fr"C:/Users/{user}/AppData/Roaming/hembrev")
+    except:
+        print(" ")
+    bar.next()
+    desktop = winshell.desktop()
+    bar.next()
 #desktop = r"path to where you wanna put your .lnk file"
-path = os.path.join(desktop, 'Hembrev.lnk')
-target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
-icon = "https://iconarchive.com/download/i65094/double-j-design/ravenna-3d/Mail.ico"
+    path = os.path.join(desktop, 'Hembrev.lnk')
+    bar.next()
+    target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
+    bar.next()
+    icon = f"C:/Users/{user}/AppData/Roaming/hembrev/Double-J-Design-Ravenna-3d-Mail.ico"
+    
+    bar.next()
+    shell = win32com.client.Dispatch("WScript.Shell")
+    bar.next()
+    shortcut = shell.CreateShortCut(path)
+    bar.next()
+    shortcut.IconLocation = icon
+    bar.next()
+    shortcut.Targetpath = target
+    bar.next()
+    shortcut.save()
+    
 
-shell = win32com.client.Dispatch("WScript.Shell")
-shortcut = shell.CreateShortCut(path)
-shortcut.IconLocation = icon
-shortcut.Targetpath = target
-shortcut.save()
-
-
-# Directory 
-directory = "hembrev"
+    bar.next()
+    directory = "hembrev"
+    bar.next()
     
 # Parent Directory path 
-parent_dir = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+    parent_dir = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+    bar.next()
     
 # Path 
-path = os.path.join(parent_dir, directory) 
+    path = os.path.join(parent_dir, directory) 
+    bar.next()
+    try:
+        os.mkdir(path) 
+    except:
+        print("")
+    bar.next()
+    desktop = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/hembrev"
+    bar.next()
+    #desktop = r"path to where you wanna put your .lnk file" 
+    path = os.path.join(desktop, 'Hembrev.lnk')
+    bar.next()
+    target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
+    bar.next()
+    icon = rf"C:\Users\{user}\AppData\Roaming\hembrev\Double-J-Design-Ravenna-3d-Mail.ico"
+    
+    bar.next()
+    shell = win32com.client.Dispatch("WScript.Shell")
+    bar.next()
+    shortcut = shell.CreateShortCut(path)
+    bar.next()
+    shortcut.Targetpath = target
+    bar.next()
+    shortcut.IconLocation = icon
+    bar.next()
+    shortcut.save()
+    bar.next()
+    print(" ")
+    bar.next()
+    os.remove("hembrev.rar")
+    bar.next()
+bar.finish()
+
+# Directory 
+
+
+
+
+
+# Directory 
+
     
 # Create the directory 
 # 'GeeksForGeeks' in 
 # '/home / User / Documents' 
 
-try:
-    os.mkdir(path) 
-except:
-    print("")
 
-desktop = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/hembrev"
-#desktop = r"path to where you wanna put your .lnk file" 
-path = os.path.join(desktop, 'Hembrev.lnk')
-target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
-icon = "https://iconarchive.com/download/i65094/double-j-design/ravenna-3d/Mail.ico"
 
-shell = win32com.client.Dispatch("WScript.Shell")
-shortcut = shell.CreateShortCut(path)
-shortcut.Targetpath = target
-shortcut.IconLocation = icon
-shortcut.save()
-print(" ")
-os.remove("hembrev.rar")
+
+
+
+
 print("klar!")

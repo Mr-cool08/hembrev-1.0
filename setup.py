@@ -43,7 +43,9 @@ if isExist == True:
 isExist = os.path.exists('hembrev.rar')
 if isExist == False:
     print("Laddar ner...")
+
     wget.download("http://hembrev.ga")
+    
 # URL of the image to be downloaded is defined as image_url
     print(" ")
     print("Klar!")

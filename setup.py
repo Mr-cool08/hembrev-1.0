@@ -6,7 +6,7 @@ import requests
 import os, winshell, win32com.client
 from pyunpack import Archive
 import wget
-from progress.bar import Bar
+
 import sys
 import shutil
 import urllib.request
@@ -73,78 +73,98 @@ if isExist == False:
     print("Klar!")
 print(" ")
 
+
+
 print("Installerar...")
-bar = Bar('Processing', max=26)
-for i in range(1):
-    Archive('hembrev.rar').extractall(f"C:/Users/{user}/AppData/Roaming")
-    bar.next()
-    try:
-        shutil.move("config.ini", fr"C:/Users/{user}/AppData/Roaming/hembrev")
-    except:
-        print(" ")
-    bar.next()
-    desktop = winshell.desktop()
-    bar.next()
+Archive('hembrev.rar').extractall(f"C:/Users/{user}/AppData/Roaming")
+
+try:
+    shutil.move("config.ini", fr"C:/Users/{user}/AppData/Roaming/hembrev")
+except:
+    print(" ")
+
+desktop = winshell.desktop()
+
 #desktop = r"path to where you wanna put your .lnk file"
-    path = os.path.join(desktop, 'Hembrev.lnk')
-    bar.next()
-    target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
-    bar.next()
-    icon = f"C:/Users/{user}/AppData/Roaming/hembrev/Double-J-Design-Ravenna-3d-Mail.ico"
-    
-    bar.next()
-    shell = win32com.client.Dispatch("WScript.Shell")
-    bar.next()
-    shortcut = shell.CreateShortCut(path)
-    bar.next()
-    shortcut.IconLocation = icon
-    bar.next()
-    shortcut.Targetpath = target
-    bar.next()
-    shortcut.save()
+path = os.path.join(desktop, 'Hembrev.lnk')
+
+target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
+
+icon = f"C:/Users/{user}/AppData/Roaming/hembrev/Double-J-Design-Ravenna-3d-Mail.ico"
     
 
-    bar.next()
-    directory = "hembrev"
-    bar.next()
+shell = win32com.client.Dispatch("WScript.Shell")
+
+shortcut = shell.CreateShortCut(path)
+
+shortcut.IconLocation = icon
+
+shortcut.Targetpath = target
+
+shortcut.save()
+    
+
+
+directory = "hembrev"
+
     
 # Parent Directory path 
-    parent_dir = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
-    bar.next()
+parent_dir = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs"
+
     
 # Path 
-    path = os.path.join(parent_dir, directory) 
-    bar.next()
-    try:
-        os.mkdir(path) 
-    except:
-        print("")
-    bar.next()
-    desktop = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/hembrev"
-    bar.next()
+path = os.path.join(parent_dir, directory) 
+
+try:
+    os.mkdir(path) 
+except:
+    print("")
+
+desktop = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/hembrev"
+
     #desktop = r"path to where you wanna put your .lnk file" 
-    path = os.path.join(desktop, 'Hembrev.lnk')
-    bar.next()
-    target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
-    bar.next()
-    icon = rf"C:\Users\{user}\AppData\Roaming\hembrev\Double-J-Design-Ravenna-3d-Mail.ico"
+path = os.path.join(desktop, 'Hembrev.lnk')
+
+target = rf"C:\Users\{user}\AppData\Roaming\hembrev\hembrev.exe"
+
+icon = rf"C:\Users\{user}\AppData\Roaming\hembrev\Double-J-Design-Ravenna-3d-Mail.ico"
     
-    bar.next()
-    shell = win32com.client.Dispatch("WScript.Shell")
-    bar.next()
-    shortcut = shell.CreateShortCut(path)
-    bar.next()
-    shortcut.Targetpath = target
-    bar.next()
-    shortcut.IconLocation = icon
-    bar.next()
-    shortcut.save()
-    bar.next()
-    print(" ")
-    bar.next()
-    os.remove("hembrev.rar")
-    bar.next()
-bar.finish()
+
+shell = win32com.client.Dispatch("WScript.Shell")
+
+shortcut = shell.CreateShortCut(path)
+
+shortcut.Targetpath = target
+
+shortcut.IconLocation = icon
+
+shortcut.save()
+
+print(" ")
+
+desktop = f"C:/Users/{user}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/hembrev"
+
+#desktop = r"path to where you wanna put your .lnk file" 
+path = os.path.join(desktop, 'uninstall.lnk')
+
+target = rf"C:\Users\{user}\AppData\Roaming\hembrev\uninstall.exe"
+
+icon = rf"C:\Users\{user}\AppData\Roaming\hembrev\Double-J-Design-Ravenna-3d-Mail.ico"
+
+
+shell = win32com.client.Dispatch("WScript.Shell")
+
+shortcut = shell.CreateShortCut(path)
+
+shortcut.Targetpath = target
+
+shortcut.IconLocation = icon
+
+shortcut.save()
+
+os.remove("hembrev.rar")
+
+
 
 # Directory 
 

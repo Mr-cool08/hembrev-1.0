@@ -1,5 +1,6 @@
 import smtplib
-import datetime   
+from encrpyt import *
+import datetime  
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
@@ -13,6 +14,7 @@ wk = dt.isocalendar()[1]
 
 
 def sendmail():
+    decrypt()
     config = configparser.ConfigParser()
     config.read('config.ini')
     mail1 = config.get('Emails', 'email1')
@@ -21,7 +23,8 @@ def sendmail():
     mail4 = config.get('Emails', 'Email4')
     mail5 = config.get('Emails', 'Email5')
     mail = config.get('login', 'email')
-    password = config.get('login', 'password')
+    with open('password.txt','r') as file:
+        password = file.read()
 
 
     docname = 'hembrev v' + str(wk) + ".docx"
@@ -50,3 +53,10 @@ def sendmail():
     server.login(mail, password)  ### if applicable
     server.send_message(msg)
     server.quit()
+    encrypt()
+    
+    
+
+
+
+

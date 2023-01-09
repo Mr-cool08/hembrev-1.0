@@ -23,4 +23,4 @@ for filename in os.listdir(folder):
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
 desktop = winshell.desktop()
-os.remove(f"{desktop}\hembrev.ink")
+input("Avinstallering klar tryck på enter för att stänga: ")

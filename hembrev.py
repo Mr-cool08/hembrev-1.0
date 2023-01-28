@@ -49,6 +49,17 @@ class Application(tk.Frame):
     
 
         
+    def mail_message(self):
+        self.title_label = tk.Label(self, text="Skriv här vad som ska stå i mailet")
+        self.title_label.grid(row=23, column=1, pady=10, columnspan=2)
+        frame = tk.Frame(self)
+        frame.grid(row=24, column=1, sticky="w", columnspan=50)
+        self.message = tk.Entry(frame, width=50)
+        self.message.grid(row=0, column=0)
+        self.message.pack()
+        self.sendmail(self.message.get())
+
+
 
     
     def rest(self):
@@ -353,7 +364,7 @@ class Application(tk.Frame):
             receivers = [mail1, mail2, mail3, mail4, mail5]
             msg['To'] = ', '.join(receivers)
             msg['Subject'] = 'hembrev v' + str(wk)
-            body = 'hembrev v' + str(wk)
+            body = message
             msg.attach(MIMEText(body, 'plain'))
 
     
@@ -379,11 +390,11 @@ class Application(tk.Frame):
         self.sendmail()
     def create_widgets(self):
         self.title_label = tk.Label(self, text="Vad gör du?")
-        self.title_label.grid(row=0, column=0, columnspan=3, pady=10)
+        self.title_label.grid(row=0, column=1, pady=10, sticky="w")
         self.title_label = tk.Label(self, text="Vad lär du dig?")
-        self.title_label.grid(row=0, column=1, columnspan=6, pady=10)
+        self.title_label.grid(row=0, column=2, columnspan=6, pady=10, sticky="w")
         self.title_label = tk.Label(self, text="Note")
-        self.title_label.grid(row=0, column=3, columnspan=7, pady=10)
+        self.title_label.grid(row=0, column=3, columnspan=7, pady=10, sticky="w")
 
 
 
@@ -396,26 +407,26 @@ class Application(tk.Frame):
             self.matte_gör.bind("<Tab>", lambda event: self.matte_lärt.focus_set())
 
             self.matte_lärt = tk.Entry(self)
-            self.matte_lärt.grid(row=1, column=2)
+            self.matte_lärt.grid(row=1, column=2, sticky="w")
             self.matte_lärt.bind("<Tab>", lambda event: self.matte_note.focus_set())
 
             self.matte_note = tk.Entry(self)
-            self.matte_note.grid(row=1, column=3)
+            self.matte_note.grid(row=1, column=3, sticky="w")
             self.matte_note.bind("<Tab>", lambda event: self.sv_gör.focus_set())
 
             self.sv_label = tk.Label(self, text="Svenska")
             self.sv_label.grid(row=2, column=0, sticky="w")
 
             self.sv_gör = tk.Entry(self)
-            self.sv_gör.grid(row=2, column=1)
+            self.sv_gör.grid(row=2, column=1, sticky="w")
             self.sv_gör.bind("<Tab>", lambda event: self.sv_lärt.focus_set())
 
             self.sv_lärt = tk.Entry(self)
-            self.sv_lärt.grid(row=2, column=2)
+            self.sv_lärt.grid(row=2, column=2, sticky="w")
             self.sv_lärt.bind("<Tab>", lambda event: self.sv_note.focus_set())
 
             self.sv_note = tk.Entry(self)
-            self.sv_note.grid(row=2, column=3)
+            self.sv_note.grid(row=2, column=3, sticky="w")
             self.sv_note.bind("<Tab>", lambda event: self.eng_gör.focus_set())
             
             
@@ -568,6 +579,9 @@ class Application(tk.Frame):
         
         self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några händelser?", command=self.händelser)
         self.add_fields_checkbox.grid(row=49, column=0)
+        
+        self.add_fields_checkbox = tk.Checkbutton(self, text="Vill du skriva något i mailet?", command=self.mail_message)
+        self.add_fields_checkbox.grid(row=47, column=0)
 
         
             
@@ -591,7 +605,7 @@ class Application(tk.Frame):
         # rest of the code 
 
 root = tk.Tk()
-root.geometry("600x400")
+root.state('zoomed')
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         root.destroy()

@@ -28,6 +28,23 @@ class Application(tk.Frame):
         self.master = master
         self.grid()
         self.create_widgets()
+        
+        
+    händelse_vad1 = ""
+    händelse_när1 = ""
+    händelse_vad2 = ""
+    händelse_när2 = ""
+    händelse_vad3 = ""
+    händelse_när3 = ""
+    rest_vad1 = ""
+    rest_hur1 = ""
+    rest_när1 = ""
+    rest_vad2 = ""
+    rest_hur2 = ""
+    rest_när2 = ""
+    rest_vad3 = ""
+    rest_hur3 = ""
+    rest_när3 = ""
     def focus_next_widget(self, event):
         event.widget.tk_focusNext().focus()
     

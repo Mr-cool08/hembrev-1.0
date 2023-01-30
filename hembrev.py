@@ -28,7 +28,7 @@ class Application(tk.Frame):
         self.master = master
         self.grid()
         self.create_widgets()
-        
+    
         
     händelse_vad1 = ""
     händelse_när1 = ""
@@ -47,6 +47,7 @@ class Application(tk.Frame):
     rest_när3 = ""
     def focus_next_widget(self, event):
         event.widget.tk_focusNext().focus()
+    
     
     
     def encrypt(self):
@@ -74,7 +75,11 @@ class Application(tk.Frame):
         self.message = tk.Entry(frame, width=50)
         self.message.grid(row=0, column=0)
         self.message.pack()
-        self.sendmail(self.message.get())
+        self.submit(self.message.get())
+
+
+
+        
 
 
 
@@ -294,24 +299,25 @@ class Application(tk.Frame):
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Vad'
         hdr_cells[1].text = 'När'
-
-        händelse_vad1 = self.händelse_vad1.get()
-        händelse_när1 = self.händelse_när1.get()
-        if händelse_vad1 and händelse_när1:
+        if self.händelser_checked.get():
+            händelse_vad1 = self.händelse_vad1.get()
+            händelse_när1 = self.händelse_när1.get()
+            
+                
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad1
             row_cells[1].text = händelse_när1
-        
-        händelse_vad2 = self.händelse_vad2.get()
-        händelse_när2 = self.händelse_när2.get()
-        if händelse_vad2 and händelse_när2:
+            
+            händelse_vad2 = self.händelse_vad2.get()
+            händelse_när2 = self.händelse_när2.get()
+            
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad2
             row_cells[1].text = händelse_när2
 
-        händelse_vad3 = self.händelse_vad3.get()
-        händelse_när3 = self.händelse_när3.get()
-        if händelse_vad3 and händelse_när3:
+            händelse_vad3 = self.händelse_vad3.get()
+            händelse_när3 = self.händelse_när3.get()
+            
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad3
             row_cells[1].text = händelse_när3
@@ -324,29 +330,26 @@ class Application(tk.Frame):
         hdr_cells[0].text = 'Vad'
         hdr_cells[1].text = 'Hur'
         hdr_cells[2].text = 'När'
-
-        rest_vad1 = self.rest_vad1.get()
-        rest_hur1 = self.rest_hur1.get()
-        rest_när1 = self.rest_när1.get()
-        if rest_vad1 and rest_hur1 and rest_när1:
+        if self.rest_checked.get():
+            rest_vad1 = self.rest_vad1.get()
+            rest_hur1 = self.rest_hur1.get()
+            rest_när1 = self.rest_när1.get()
             row_cells = table.add_row().cells
             row_cells[0].text = rest_vad1
             row_cells[1].text = rest_hur1
             row_cells[2].text = rest_när1
-        
-        rest_vad2 = self.rest_vad2.get()
-        rest_hur2 = self.rest_hur2.get()
-        rest_när2 = self.rest_när2.get()
-        if rest_vad2 and rest_hur2 and rest_när2:
+            
+            rest_vad2 = self.rest_vad2.get()
+            rest_hur2 = self.rest_hur2.get()
+            rest_när2 = self.rest_när2.get()
             row_cells = table.add_row().cells
             row_cells[0].text = rest_vad2
             row_cells[1].text = rest_hur2
             row_cells[2].text = rest_när2
-        
-        rest_vad3 = self.rest_vad3.get()
-        rest_hur3 = self.rest_hur3.get()
-        rest_när3 = self.rest_när3.get()
-        if rest_vad3 and rest_hur3 and rest_när3:
+            
+            rest_vad3 = self.rest_vad3.get()
+            rest_hur3 = self.rest_hur3.get()
+            rest_när3 = self.rest_när3.get()
             row_cells = table.add_row().cells
             row_cells[0].text = rest_vad3
             row_cells[1].text = rest_hur3
@@ -359,8 +362,13 @@ class Application(tk.Frame):
 
         document.save(f'Hembrev v{wk}.docx')
         
-        
-    def sendmail(self):
+    
+    def sendmail(self, message):
+            
+
+                
+                
+            
             self.decrypt()
             config = configparser.ConfigParser()
             config.read('config.ini')
@@ -402,9 +410,12 @@ class Application(tk.Frame):
             server.quit()
             self.encrypt()
     def submit(self):
+        message = self.message.get()
         self.create_document()
         self.master.destroy()
-        self.sendmail()
+        self.sendmail(message)
+
+
     def create_widgets(self):
         self.title_label = tk.Label(self, text="Vad gör du?")
         self.title_label.grid(row=0, column=1, pady=10, sticky="w")
@@ -590,15 +601,18 @@ class Application(tk.Frame):
         
 
         
-        self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några rester?", command=self.rest)
+        self.rest_checked = tk.IntVar()
+        self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några rester?", variable=self.rest_checked, command=self.rest)
         self.add_fields_checkbox.grid(row=48, column=0)
         
-        
-        self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några händelser?", command=self.händelser)
+        self.händelser_checked = tk.IntVar()
+        self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några händelser?", command=self.händelser, variable=self.händelser_checked)
         self.add_fields_checkbox.grid(row=49, column=0)
         
-        self.add_fields_checkbox = tk.Checkbutton(self, text="Vill du skriva något i mailet?", command=self.mail_message)
-        self.add_fields_checkbox.grid(row=47, column=0)
+        self.mail_message_checked = tk.IntVar()
+        self.message = tk.Checkbutton(self, text="Vill du skriva något i mailet?", command=self.mail_message, variable=self.mail_message_checked)
+        self.message.grid(row=47, column=0)
+        
 
         
             
@@ -613,7 +627,7 @@ class Application(tk.Frame):
         self.submit_button.grid(row=50, column=1, columnspan=3, pady=10)
         
         
-        
+      
 
 
         

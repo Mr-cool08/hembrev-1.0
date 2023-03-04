@@ -10,12 +10,12 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 import configparser
-dt = datetime.date.today()
-wk = dt.isocalendar()[1]
 from windtalker import SymmetricCipher
 import os
+#getting the week number
 dt = datetime.date.today()
 wk = dt.isocalendar()[1]
+
 
 
 
@@ -29,7 +29,7 @@ class Application(tk.Frame):
         self.grid()
         self.create_widgets()
     
-        
+    #mark these as empty if the user dont input    
     händelse_vad1 = ""
     händelse_när1 = ""
     händelse_vad2 = ""
@@ -45,20 +45,21 @@ class Application(tk.Frame):
     rest_vad3 = ""
     rest_hur3 = ""
     rest_när3 = ""
+    #when pressed tab next input
     def focus_next_widget(self, event):
         event.widget.tk_focusNext().focus()
     
     
-    
+    #encrypt and decrypt for the password
     def encrypt(self):
-        c = SymmetricCipher(password="password")
+        c = SymmetricCipher(password="Super secret password")
         try:
             c.encrypt_file("password.txt")
             os.remove("password.txt")
         except OSError:
             os.remove("password-encrypted.txt")
     def decrypt(self):
-        c = SymmetricCipher(password="password")
+        c = SymmetricCipher(password="Super secret password")
         try:
             c.decrypt_file("password-encrypted.txt")
             os.remove("password-encrypted.txt")
@@ -66,7 +67,7 @@ class Application(tk.Frame):
             pass
     
 
-        
+    #if the user want to send something in the mail
     def mail_message(self):
         self.title_label = tk.Label(self, text="Skriv här vad som ska stå i mailet")
         self.title_label.grid(row=23, column=1, pady=10, columnspan=2)
@@ -83,7 +84,7 @@ class Application(tk.Frame):
 
 
 
-    
+    #if the user have any rester
     def rest(self):
             
             
@@ -137,7 +138,7 @@ class Application(tk.Frame):
         tk.Entry.pack(self)
         
         
-        
+    #if the user have anything that is going to happen    
     def händelser(self):
             
             
@@ -180,7 +181,8 @@ class Application(tk.Frame):
         self.händelse_när3 = tk.Entry(self)
         self.händelse_när3.grid(row=21, column=2)
         self.händelse_när3.bind("<Tab>", lambda event: self.extra_note2.focus_set())
-    def create_document(self):
+     #creating the document with all inputs
+     def create_document(self):
         
         document = Document()
 
@@ -201,6 +203,7 @@ class Application(tk.Frame):
         row_cells[1].text = armatte
         row_cells[2].text = lermatte
         row_cells[3].text = notematte
+        
         arsv = self.sv_gör.get()
         lersv = self.sv_lärt.get()
         notesv = self.sv_note.get()
@@ -227,7 +230,6 @@ class Application(tk.Frame):
         row_cells[1].text = arno
         row_cells[2].text = lerno
         row_cells[3].text = noteno
-        
         
         arso = self.so_gör.get()
         lerso = self.so_lärt.get()
@@ -292,32 +294,29 @@ class Application(tk.Frame):
         row_cells[2].text = lersl
         row_cells[3].text = notesl
         
-        
+    
         document.add_heading('Händelser', 0)
         table = document.add_table(rows=1, cols=2)
         table.style = 'Table Grid'
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Vad'
         hdr_cells[1].text = 'När'
+        #only if the checkbox is checked it inputs it else it will just be empty
         if self.händelser_checked.get():
             händelse_vad1 = self.händelse_vad1.get()
-            händelse_när1 = self.händelse_när1.get()
-            
-                
+            händelse_när1 = self.händelse_när1.get() 
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad1
             row_cells[1].text = händelse_när1
             
             händelse_vad2 = self.händelse_vad2.get()
             händelse_när2 = self.händelse_när2.get()
-            
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad2
             row_cells[1].text = händelse_när2
 
             händelse_vad3 = self.händelse_vad3.get()
             händelse_när3 = self.händelse_när3.get()
-            
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad3
             row_cells[1].text = händelse_när3
@@ -356,18 +355,14 @@ class Application(tk.Frame):
             row_cells[2].text = rest_när3
 
 
-        
-        
-        # repeat the process for all the subject
-
+        #saving the document with the week number
         document.save(f'Hembrev v{wk}.docx')
         
     
     def sendmail(self, message):
-            
-
-                
-                
+    
+            """"getting all info for the mail,
+            like password and emails""""
             
             self.decrypt()
             config = configparser.ConfigParser()
@@ -381,18 +376,15 @@ class Application(tk.Frame):
             with open('password.txt','r') as file:
                 password = file.read()
 
-
+            #making the email
             docname = 'hembrev v' + str(wk) + ".docx"
             msg = MIMEMultipart()
             msg['From'] = mail
-    
             receivers = [mail1, mail2, mail3, mail4, mail5]
             msg['To'] = ', '.join(receivers)
             msg['Subject'] = 'hembrev v' + str(wk)
             body = message
             msg.attach(MIMEText(body, 'plain'))
-
-    
             attachment = open(docname, 'rb')
             part = MIMEBase('application', "octet-stream")
             part.set_payload((attachment).read())
@@ -400,7 +392,7 @@ class Application(tk.Frame):
             part.add_header('Content-Disposition', "attachment; filename= %s" % docname)
             msg.attach(part)
 
-        
+            #sending the mail with a office 365 server
             server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
             server.ehlo()
             server.starttls()
@@ -409,14 +401,16 @@ class Application(tk.Frame):
             server.send_message(msg)
             server.quit()
             self.encrypt()
+    #when the user presses the sumbit button
     def submit(self):
         message = self.message.get()
         self.create_document()
         self.master.destroy()
         self.sendmail(message)
-
-
+    
+    #create_widgets is where all the visual stuff is
     def create_widgets(self):
+        #labels so the user know where to input what
         self.title_label = tk.Label(self, text="Vad gör du?")
         self.title_label.grid(row=0, column=1, pady=10, sticky="w")
         self.title_label = tk.Label(self, text="Vad lär du dig?")
@@ -425,7 +419,7 @@ class Application(tk.Frame):
         self.title_label.grid(row=0, column=3, columnspan=7, pady=10, sticky="w")
 
 
-
+        #the input boxes for the subjects
         def questions(self):
             self.matte_label = tk.Label(self, text="Matte")
             self.matte_label.grid(row=1, column=0, sticky="w")
@@ -579,8 +573,6 @@ class Application(tk.Frame):
             self.sp_note = tk.Entry(self)
             self.sp_note.grid(row=10, column=3)
             self.sp_note.bind("<Tab>", lambda event: self.ty_gör.focus_set())
-
-            
             
             self.sl_label = tk.Label(self, text="Slöjd")
             self.sl_label.grid(row=11, column=0, sticky="w")
@@ -600,7 +592,7 @@ class Application(tk.Frame):
         questions(self)
         
 
-        
+        #buttons and checkboxes
         self.rest_checked = tk.IntVar()
         self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några rester?", variable=self.rest_checked, command=self.rest)
         self.add_fields_checkbox.grid(row=48, column=0)
@@ -613,30 +605,13 @@ class Application(tk.Frame):
         self.message = tk.Checkbutton(self, text="Vill du skriva något i mailet?", command=self.mail_message, variable=self.mail_message_checked)
         self.message.grid(row=47, column=0)
         
-
-        
-            
-                
-
-                
-
-
-            # repeat the process for all the subjects
-
         self.submit_button = tk.Button(self, text="Submit", command=self.submit)
         self.submit_button.grid(row=50, column=1, columnspan=3, pady=10)
-        
-        
-      
 
-
-        
-        #get the value from all the entry fields
-        
-        # rest of the code 
-
+# creating the window
 root = tk.Tk()
 root.state('zoomed')
+#if user presses the X the program confirms it
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         root.destroy()

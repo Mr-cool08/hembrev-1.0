@@ -19,9 +19,15 @@ jag behöver en riktig logo skicka mig ett mail på förslag gärna
 
 
 funktioner:
+
 snabb navigering
+
 krypterat lösenord
+
 automatisk mail utskick
+
 enkelt att använda
+
 open source
+
 GRATIS!

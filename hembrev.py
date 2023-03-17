@@ -707,7 +707,7 @@ def start(run):
         run(Application)
     else:
         with open(filename, 'w') as file:
-            file.write('this file is only so the program knows if its the first time. DO NOT DELETE')
+            file.write('This file is only so the program knows if its the first time. DO NOT DELETE')
             setup(start , run)
     
     

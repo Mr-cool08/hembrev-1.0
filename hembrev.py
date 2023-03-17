@@ -123,7 +123,7 @@ class Application(tk.Frame):
             
         self.title_label = tk.Label(self, text="Vad")
         self.title_label.grid(row=14, column=0, columnspan=3, pady=10)
-        self.title_label = tk.Label(self, text="Hur")
+        self.title_label = tk.Label(self, text="Planering")
         self.title_label.grid(row=14, column=1, columnspan=5, pady=10)
         self.title_label = tk.Label(self, text="När")
         self.title_label.grid(row=14, column=3, columnspan=6, pady=10)
@@ -311,7 +311,7 @@ class Application(tk.Frame):
         lerhkk = self.hkk_lärt.get()
         notehkk = self.hkk_note.get()
         row_cells = table.add_row().cells
-        row_cells[0].text = 'Hemkundskap'
+        row_cells[0].text = 'Hemkunskap'
         row_cells[1].text = arhkk
         row_cells[2].text = lerhkk
         row_cells[3].text = notehkk
@@ -370,7 +370,7 @@ class Application(tk.Frame):
         table.style = 'Table Grid'
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Vad'
-        hdr_cells[1].text = 'Hur'
+        hdr_cells[1].text = 'Planering'
         hdr_cells[2].text = 'När'
         if self.rest_checked.get():
             rest_vad1 = self.rest_vad1.get()
@@ -509,7 +509,7 @@ class Application(tk.Frame):
             self.sv_note.bind("<Return>", lambda event: self.eng_gör.focus_set())
             
             
-            self.eng_label = tk.Label(self, text="Engleska")
+            self.eng_label = tk.Label(self, text="Engelska")
             self.eng_label.grid(row=3, column=0, sticky="w")
 
             self.eng_gör = tk.Entry(self)
@@ -600,7 +600,7 @@ class Application(tk.Frame):
             self.bi_note.grid(row=8, column=3)
             self.bi_note.bind("<Return>", lambda event: self.hkk_gör.focus_set())
             
-            self.hkk_label = tk.Label(self, text="hemkunskapen")
+            self.hkk_label = tk.Label(self, text="Hemkunskap")
             self.hkk_label.grid(row=9, column=0, sticky="w")
 
             self.hkk_gör = tk.Entry(self)
@@ -665,6 +665,24 @@ class Application(tk.Frame):
         
         self.submit_button = tk.Button(self, text="Submit", command=self.submit)
         self.submit_button.grid(row=50, column=1, columnspan=3, pady=10)
+        self.restart_button = tk.Button(self.master, text="Ändra E-epostadress", command=self.restart_program)
+        self.restart_button.pack(side=tk.LEFT, anchor=tk.SW, padx=10, pady=10)
+        
+    def restart_program(self):
+        # display a message to the user
+        messagebox.showinfo("Ändra E-epostadress", "Starta om programmet för att genomföra ändringar")
+        
+        # delete the firstime.txt file
+        try:
+            os.remove("firstime.txt")
+        except FileNotFoundError:
+            pass
+        
+        # exit the program
+        self.master.destroy()
+        
+
+        
 
 # creating the window
 
@@ -676,7 +694,7 @@ def run(Application):
 
     #if user presses the X the program confirms it
     def on_closing():
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        if messagebox.askokcancel("Stäng", "Är du säker"):
             root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
@@ -745,7 +763,7 @@ def setup(start,run):
         if os.path.exists('password.txt'):
             os.remove('password.txt')
   
-        time.sleep(3)  
+        time.sleep(1)  
         def password_write(password):
             with open('password.txt', 'w') as f:
                 f.write(password)

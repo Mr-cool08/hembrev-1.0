@@ -13,6 +13,22 @@ import configparser
 from windtalker import SymmetricCipher
 import os
 import random
+import tkinter as tk
+from tkinter import messagebox
+from configparser import ConfigParser
+from cryptography.fernet import Fernet
+import time
+import requests
+import os
+from tqdm import tqdm
+from windtalker import SymmetricCipher
+import os
+import zipfile
+import sys
+import shutil
+import urllib.request
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 #getting the week number
 dt = datetime.date.today()
 wk = dt.isocalendar()[1]
@@ -22,7 +38,15 @@ wk = dt.isocalendar()[1]
 
 
     
-    
+
+def decrypt():
+    c = SymmetricCipher(password="Super secret password")
+    try:
+        c.decrypt_file("password-encrypted.txt")
+        os.remove("password-encrypted.txt")
+    except OSError:
+        c.encrypt_file("password.txt")
+        decrypt()
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -31,7 +55,7 @@ class Application(tk.Frame):
         self.grid()
         self.create_widgets()
     
-    #mark these as empty if the user dont input    
+      
     #mark these as empty if the user dont input    
     händelse_vad1 = ""
     händelse_när1 = ""
@@ -48,33 +72,34 @@ class Application(tk.Frame):
     rest_vad3 = ""
     rest_hur3 = ""
     rest_när3 = ""
-    #when pressed tab next input
-    #when pressed tab next input
-    def focus_next_widget(self, event):
-        event.widget.tk_focusNext().focus()
+   
     
     
-    #encrypt and decrypt for the password
+    
+    
     #encrypt and decrypt for the password
     def encrypt(self):
-        c = SymmetricCipher(password="Super secret password")
         c = SymmetricCipher(password="Super secret password")
         try:
             c.encrypt_file("password.txt")
             os.remove("password.txt")
         except OSError:
+            c.decrypt_file("password-encrypted.txt")
             os.remove("password-encrypted.txt")
+            self.encrypt()
     def decrypt(self):
-        c = SymmetricCipher(password="Super secret password")
         c = SymmetricCipher(password="Super secret password")
         try:
             c.decrypt_file("password-encrypted.txt")
             os.remove("password-encrypted.txt")
-        except:
-            pass
+        except OSError:
+            c.encrypt_file("password.txt")
+            os.remove("password.txt")
+            self.decrypt()
+            
     
 
-    #if the user want to send something in the mail
+    
     #if the user want to send something in the mail
     def mail_message(self):
         self.title_label = tk.Label(self, text="Skriv här vad som ska stå i mailet")
@@ -91,7 +116,7 @@ class Application(tk.Frame):
 
 
 
-    #if the user have any rester
+    
     #if the user have any rester
     def rest(self):
             
@@ -107,11 +132,11 @@ class Application(tk.Frame):
 
         self.rest_vad1 = tk.Entry(self)
         self.rest_vad1.grid(row=15, column=1)
-        self.rest_vad1.bind("<Tab>", lambda event: self.rest_hur1.focus_set())
+        self.rest_vad1.bind("<Return>", lambda event: self.rest_hur1.focus_set())
 
         self.rest_hur1 = tk.Entry(self)
         self.rest_hur1.grid(row=15, column=2)
-        self.rest_hur1.bind("<Tab>", lambda event: self.rest_nä1.focus_set())
+        self.rest_hur1.bind("<Return>", lambda event: self.rest_nä1.focus_set())
 
         self.rest_när1 = tk.Entry(self)
         self.rest_när1.grid(row=15, column=3)
@@ -121,11 +146,11 @@ class Application(tk.Frame):
 
         self.rest_vad2 = tk.Entry(self)
         self.rest_vad2.grid(row=16, column=1)
-        self.rest_vad2.bind("<Tab>", lambda event: self.extra_lärt2.focus_set())
+        self.rest_vad2.bind("<Return>", lambda event: self.extra_lärt2.focus_set())
 
         self.rest_hur2 = tk.Entry(self)
         self.rest_hur2.grid(row=16, column=2)
-        self.rest_hur2.bind("<Tab>", lambda event: self.extra_note2.focus_set())
+        self.rest_hur2.bind("<Return>", lambda event: self.extra_note2.focus_set())
         
         self.rest_när2 = tk.Entry(self)
         self.rest_när2.grid(row=16, column=3)
@@ -135,18 +160,18 @@ class Application(tk.Frame):
 
         self.rest_vad3 = tk.Entry(self)
         self.rest_vad3.grid(row=17, column=1)
-        self.rest_vad3.bind("<Tab>", lambda event: self.extra_lärt2.focus_set())
+        self.rest_vad3.bind("<Return>", lambda event: self.extra_lärt2.focus_set())
 
         self.rest_hur3 = tk.Entry(self)
         self.rest_hur3.grid(row=17, column=2)
-        self.rest_hur3.bind("<Tab>", lambda event: self.extra_note2.focus_set())
+        self.rest_hur3.bind("<Return>", lambda event: self.extra_note2.focus_set())
 
         self.rest_när3 = tk.Entry(self)
         self.rest_när3.grid(row=17, column=3)
         tk.Entry.pack(self)
         
         
-    #if the user have anything that is going to happen    
+       
     #if the user have anything that is going to happen    
     def händelser(self):
             
@@ -161,11 +186,11 @@ class Application(tk.Frame):
 
         self.händelse_vad1 = tk.Entry(self)
         self.händelse_vad1.grid(row=19, column=1)
-        self.händelse_vad1.bind("<Tab>", lambda event: self.rest_hur1.focus_set())
+        self.händelse_vad1.bind("<Return>", lambda event: self.rest_hur1.focus_set())
 
         self.händelse_när1 = tk.Entry(self)
         self.händelse_när1.grid(row=19, column=2)
-        self.händelse_när1.bind("<Tab>", lambda event: self.rest_nä1.focus_set())
+        self.händelse_när1.bind("<Return>", lambda event: self.rest_nä1.focus_set())
 
         
         self.extra_label2 = tk.Label(self, text="Händelse 2")
@@ -173,11 +198,11 @@ class Application(tk.Frame):
 
         self.händelse_vad2 = tk.Entry(self)
         self.händelse_vad2.grid(row=20, column=1)
-        self.händelse_vad2.bind("<Tab>", lambda event: self.extra_lärt2.focus_set())
+        self.händelse_vad2.bind("<Return>", lambda event: self.extra_lärt2.focus_set())
 
         self.händelse_när2 = tk.Entry(self)
         self.händelse_när2.grid(row=20, column=2)
-        self.händelse_när2.bind("<Tab>", lambda event: self.extra_note2.focus_set())
+        self.händelse_när2.bind("<Return>", lambda event: self.extra_note2.focus_set())
         
         
         self.extra_label3 = tk.Label(self, text="Händelse 3")
@@ -185,17 +210,22 @@ class Application(tk.Frame):
 
         self.händelse_vad3 = tk.Entry(self)
         self.händelse_vad3.grid(row=21, column=1)
-        self.händelse_vad3.bind("<Tab>", lambda event: self.extra_lärt2.focus_set())
+        self.händelse_vad3.bind("<Return>", lambda event: self.extra_lärt2.focus_set())
 
         self.händelse_när3 = tk.Entry(self)
         self.händelse_när3.grid(row=21, column=2)
-        self.händelse_när3.bind("<Tab>", lambda event: self.extra_note2.focus_set())
+        self.händelse_när3.bind("<Return>", lambda event: self.extra_note2.focus_set())
+        
+        
      #creating the document with all inputs
     def create_document(self):
         
         document = Document()
 
         document.add_heading('Hembrev', 0)
+        
+        
+        #creating table for all subjects
         table = document.add_table(rows=1, cols=4)
         table.style = 'Table Grid'
         hdr_cells = table.rows[0].cells
@@ -305,14 +335,14 @@ class Application(tk.Frame):
         row_cells[3].text = notesl
         
     
-    
+        #creating table for "händelser"
         document.add_heading('Händelser', 0)
         table = document.add_table(rows=1, cols=2)
         table.style = 'Table Grid'
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Vad'
         hdr_cells[1].text = 'När'
-        #only if the checkbox is checked it inputs it else it will just be empty
+        
         #only if the checkbox is checked it inputs it else it will just be empty
         if self.händelser_checked.get():
             händelse_vad1 = self.händelse_vad1.get()
@@ -334,7 +364,7 @@ class Application(tk.Frame):
             row_cells[0].text = händelse_vad3
             row_cells[1].text = händelse_när3
 
-        
+        #creating table for "rester"
         document.add_heading('Rester', 0)
         table = document.add_table(rows=1, cols=3)
         table.style = 'Table Grid'
@@ -368,16 +398,17 @@ class Application(tk.Frame):
             row_cells[2].text = rest_när3
 
 
-        #saving the document with the week number
+       
         #saving the document with the week number
         document.save(f'Hembrev v{wk}.docx')
         
     
     def sendmail(self, message):
+            #code for message in mail
             config = configparser.ConfigParser()
             config.read('config.ini')
             mail = config.get('login', 'email')
-            name = mail.split(".")[0]
+            name = mail.split(".")[0].capitalize()
             good_bye = ["Ha en bra dag!:)", f"Mvh {name}", f"vänliga hälsningar {name}"]
             random_message = random.choice(good_bye)
             mail_body = message  + "\n" + "\n" +"\n" +"\n" +"\n" + random_message +"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"\n"+"Detta mail var skickat igenom hembrevs programmet"
@@ -394,7 +425,6 @@ class Application(tk.Frame):
             with open('password.txt','r') as file:
                 password = file.read()
 
-            #making the email
             #making the email
             docname = 'hembrev v' + str(wk) + ".docx"
             msg = MIMEMultipart()
@@ -422,7 +452,6 @@ class Application(tk.Frame):
             server.quit()
             self.encrypt()
     #when the user presses the sumbit button
-    #when the user presses the sumbit button
     def submit(self):
         if self.mail_message_checked.get() == 1:
             message = self.message.get().strip() or ' '
@@ -437,7 +466,7 @@ class Application(tk.Frame):
     
     #create_widgets is where all the visual stuff is
     def create_widgets(self):
-        #labels so the user know where to input what
+        
         #labels so the user know where to input what
         self.title_label = tk.Label(self, text="Vad gör du?")
         self.title_label.grid(row=0, column=1, pady=10, sticky="w")
@@ -448,37 +477,36 @@ class Application(tk.Frame):
 
 
         #the input boxes for the subjects
-        #the input boxes for the subjects
         def questions(self):
             self.matte_label = tk.Label(self, text="Matte")
             self.matte_label.grid(row=1, column=0, sticky="w")
 
             self.matte_gör = tk.Entry(self)
             self.matte_gör.grid(row=1, column=1, sticky="w")
-            self.matte_gör.bind("<Tab>", lambda event: self.matte_lärt.focus_set())
+            self.matte_gör.bind("<Return>", lambda event: self.matte_lärt.focus_set())
 
             self.matte_lärt = tk.Entry(self)
             self.matte_lärt.grid(row=1, column=2, sticky="w")
-            self.matte_lärt.bind("<Tab>", lambda event: self.matte_note.focus_set())
+            self.matte_lärt.bind("<Return>", lambda event: self.matte_note.focus_set())
 
             self.matte_note = tk.Entry(self)
             self.matte_note.grid(row=1, column=3, sticky="w")
-            self.matte_note.bind("<Tab>", lambda event: self.sv_gör.focus_set())
+            self.matte_note.bind("<Return>", lambda event: self.sv_gör.focus_set())
 
             self.sv_label = tk.Label(self, text="Svenska")
             self.sv_label.grid(row=2, column=0, sticky="w")
 
             self.sv_gör = tk.Entry(self)
             self.sv_gör.grid(row=2, column=1, sticky="w")
-            self.sv_gör.bind("<Tab>", lambda event: self.sv_lärt.focus_set())
+            self.sv_gör.bind("<Return>", lambda event: self.sv_lärt.focus_set())
 
             self.sv_lärt = tk.Entry(self)
             self.sv_lärt.grid(row=2, column=2, sticky="w")
-            self.sv_lärt.bind("<Tab>", lambda event: self.sv_note.focus_set())
+            self.sv_lärt.bind("<Return>", lambda event: self.sv_note.focus_set())
 
             self.sv_note = tk.Entry(self)
             self.sv_note.grid(row=2, column=3, sticky="w")
-            self.sv_note.bind("<Tab>", lambda event: self.eng_gör.focus_set())
+            self.sv_note.bind("<Return>", lambda event: self.eng_gör.focus_set())
             
             
             self.eng_label = tk.Label(self, text="Engleska")
@@ -486,30 +514,30 @@ class Application(tk.Frame):
 
             self.eng_gör = tk.Entry(self)
             self.eng_gör.grid(row=3, column=1)
-            self.eng_gör.bind("<Tab>", lambda event: self.sv_lärt.focus_set())
+            self.eng_gör.bind("<Return>", lambda event: self.eng_lärt.focus_set())
 
             self.eng_lärt = tk.Entry(self)
             self.eng_lärt.grid(row=3, column=2)
-            self.eng_lärt.bind("<Tab>", lambda event: self.sv_note.focus_set())
+            self.eng_lärt.bind("<Return>", lambda event: self.eng_note.focus_set())
 
             self.eng_note = tk.Entry(self)
             self.eng_note.grid(row=3, column=3)
-            self.eng_note.bind("<Tab>", lambda event: self.eng_gör.focus_set())
+            self.eng_note.bind("<Return>", lambda event: self.no_gör.focus_set())
             
             self.no_label = tk.Label(self, text="NO")
             self.no_label.grid(row=4, column=0, sticky="w")
 
             self.no_gör = tk.Entry(self)
             self.no_gör.grid(row=4, column=1)
-            self.no_gör.bind("<Tab>", lambda event: self.no_lärt.focus_set())
+            self.no_gör.bind("<Return>", lambda event: self.no_lärt.focus_set())
 
             self.no_lärt = tk.Entry(self)
             self.no_lärt.grid(row=4, column=2)
-            self.no_lärt.bind("<Tab>", lambda event: self.no_note.focus_set())
+            self.no_lärt.bind("<Return>", lambda event: self.no_note.focus_set())
 
             self.no_note = tk.Entry(self)
             self.no_note.grid(row=4, column=3)
-            self.no_note.bind("<Tab>", lambda event: self.submit_button.focus_set())
+            self.no_note.bind("<Return>", lambda event: self.so_gör.focus_set())
             
             
             self.so_label = tk.Label(self, text="SO")
@@ -517,102 +545,102 @@ class Application(tk.Frame):
 
             self.so_gör = tk.Entry(self)
             self.so_gör.grid(row=5, column=1)
-            self.so_gör.bind("<Tab>", lambda event: self.so_lärt.focus_set())
+            self.so_gör.bind("<Return>", lambda event: self.so_lärt.focus_set())
 
             self.so_lärt = tk.Entry(self)
             self.so_lärt.grid(row=5, column=2)
-            self.so_lärt.bind("<Tab>", lambda event: self.so_note.focus_set())
+            self.so_lärt.bind("<Return>", lambda event: self.so_note.focus_set())
 
             self.so_note = tk.Entry(self)
             self.so_note.grid(row=5, column=3)
-            self.so_note.bind("<Tab>", lambda event: self.idh_gör.focus_set())
+            self.so_note.bind("<Return>", lambda event: self.idh_gör.focus_set())
             
             self.idh_label = tk.Label(self, text="IDH")
             self.idh_label.grid(row=6, column=0, sticky="w")
 
             self.idh_gör = tk.Entry(self)
             self.idh_gör.grid(row=6, column=1)
-            self.idh_gör.bind("<Tab>", lambda event: self.idh_lärt.focus_set())
+            self.idh_gör.bind("<Return>", lambda event: self.idh_lärt.focus_set())
 
             self.idh_lärt = tk.Entry(self)
             self.idh_lärt.grid(row=6, column=2)
-            self.idh_lärt.bind("<Tab>", lambda event: self.idh_note.focus_set())
+            self.idh_lärt.bind("<Return>", lambda event: self.idh_note.focus_set())
 
             self.idh_note = tk.Entry(self)
             self.idh_note.grid(row=6, column=3)
-            self.idh_note.bind("<Tab>", lambda event: self.mu_gör.focus_set())
+            self.idh_note.bind("<Return>", lambda event: self.mu_gör.focus_set())
             
             self.mu_label = tk.Label(self, text="Musik")
             self.mu_label.grid(row=7, column=0, sticky="w")
 
             self.mu_gör = tk.Entry(self)
             self.mu_gör.grid(row=7, column=1)
-            self.mu_gör.bind("<Tab>", lambda event: self.mu_lärt.focus_set())
+            self.mu_gör.bind("<Return>", lambda event: self.mu_lärt.focus_set())
 
             self.mu_lärt = tk.Entry(self)
             self.mu_lärt.grid(row=7, column=2)
-            self.mu_lärt.bind("<Tab>", lambda event: self.mu_note.focus_set())
+            self.mu_lärt.bind("<Return>", lambda event: self.mu_note.focus_set())
 
             self.mu_note = tk.Entry(self)
             self.mu_note.grid(row=7, column=3)
-            self.mu_note.bind("<Tab>", lambda event: self.bi_gör.focus_set())
+            self.mu_note.bind("<Return>", lambda event: self.bi_gör.focus_set())
             
             self.bi_label = tk.Label(self, text="Bild")
             self.bi_label.grid(row=8, column=0, sticky="w")
 
             self.bi_gör = tk.Entry(self)
             self.bi_gör.grid(row=8, column=1)
-            self.bi_gör.bind("<Tab>", lambda event: self.bi_lärt.focus_set())
+            self.bi_gör.bind("<Return>", lambda event: self.bi_lärt.focus_set())
 
             self.bi_lärt = tk.Entry(self)
             self.bi_lärt.grid(row=8, column=2)
-            self.bi_lärt.bind("<Tab>", lambda event: self.bi_note.focus_set())
+            self.bi_lärt.bind("<Return>", lambda event: self.bi_note.focus_set())
 
             self.bi_note = tk.Entry(self)
             self.bi_note.grid(row=8, column=3)
-            self.bi_note.bind("<Tab>", lambda event: self.hkk_gör.focus_set())
+            self.bi_note.bind("<Return>", lambda event: self.hkk_gör.focus_set())
             
             self.hkk_label = tk.Label(self, text="hemkunskapen")
             self.hkk_label.grid(row=9, column=0, sticky="w")
 
             self.hkk_gör = tk.Entry(self)
             self.hkk_gör.grid(row=9, column=1)
-            self.hkk_gör.bind("<Tab>", lambda event: self.hkk_lärt.focus_set())
+            self.hkk_gör.bind("<Return>", lambda event: self.hkk_lärt.focus_set())
 
             self.hkk_lärt = tk.Entry(self)
             self.hkk_lärt.grid(row=9, column=2)
-            self.hkk_lärt.bind("<Tab>", lambda event: self.hkk_note.focus_set())
+            self.hkk_lärt.bind("<Return>", lambda event: self.hkk_note.focus_set())
             
 
             self.hkk_note = tk.Entry(self)
             self.hkk_note.grid(row=9, column=3)
-            self.hkk_note.bind("<Tab>", self.focus_next_widget)
+            self.hkk_note.bind("<Return>", lambda event: self.sp_gör.focus_set())
             
             self.sp_label = tk.Label(self, text="Språk")
             self.sp_label.grid(row=10, column=0, sticky="w")
 
             self.sp_gör = tk.Entry(self)
             self.sp_gör.grid(row=10, column=1)
-            self.sp_gör.bind("<Tab>", lambda event: self.sp_lärt.focus_set())
+            self.sp_gör.bind("<Return>", lambda event: self.sp_lärt.focus_set())
 
             self.sp_lärt = tk.Entry(self)
             self.sp_lärt.grid(row=10, column=2)
-            self.sp_lärt.bind("<Tab>", lambda event: self.sp_note.focus_set())
+            self.sp_lärt.bind("<Return>", lambda event: self.sp_note.focus_set())
 
             self.sp_note = tk.Entry(self)
             self.sp_note.grid(row=10, column=3)
-            self.sp_note.bind("<Tab>", lambda event: self.ty_gör.focus_set())
+            self.sp_note.bind("<Return>", lambda event: self.sl_gör.focus_set())
             
             self.sl_label = tk.Label(self, text="Slöjd")
             self.sl_label.grid(row=11, column=0, sticky="w")
 
             self.sl_gör = tk.Entry(self)
             self.sl_gör.grid(row=11, column=1)
-            self.sl_gör.bind("<Tab>", lambda event: self.sl_lärt.focus_set())
+            self.sl_gör.bind("<Return>", lambda event: self.sl_lärt.focus_set())
 
             self.sl_lärt = tk.Entry(self)
             self.sl_lärt.grid(row=11, column=2)
-            self.sl_lärt.bind("<Tab>", lambda event: self.sl_note.focus_set())
+            self.sl_lärt.bind("<Return>", lambda event: self.sl_note.focus_set())
 
             self.sl_note = tk.Entry(self)
             self.sl_note.grid(row=11, column=3)
@@ -621,7 +649,7 @@ class Application(tk.Frame):
         questions(self)
         
 
-        #buttons and checkboxes
+        
         #buttons and checkboxes
         self.rest_checked = tk.IntVar()
         self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några rester?", variable=self.rest_checked, command=self.rest)
@@ -640,15 +668,143 @@ class Application(tk.Frame):
 
 # creating the window
 
-# creating the window
-root = tk.Tk()
-root.state('zoomed')
-#if user presses the X the program confirms it
-#if user presses the X the program confirms it
-def on_closing():
-    if messagebox.askokcancel("Quit", "Do you want to quit?"):
-        root.destroy()
+def run(Application):
+    root = tk.Tk()
+    root.state('zoomed')
+    root.title("Hembrev")
+    
 
-root.protocol("WM_DELETE_WINDOW", on_closing)
-app = Application(master=root)
-app.mainloop()
+    #if user presses the X the program confirms it
+    def on_closing():
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    app = Application(master=root)
+    app.mainloop()
+    
+def start(run):
+    filename = "firstime.txt"
+    if os.path.exists(filename):
+        run(Application)
+    else:
+        with open(filename, 'w') as file:
+            file.write('this file is only so the program knows if its the first time. DO NOT DELETE')
+            setup(start , run)
+    
+    
+    
+    
+    
+    
+def setup(start,run):
+    def submit(start, run):
+        def encrypt():
+            c = SymmetricCipher(password="Super secret password")
+            try:
+                c.encrypt_file("password.txt")
+                os.remove("password.txt")
+            except OSError:
+                os.remove("password-encrypted.txt")
+                encrypt()
+                
+        global Aemail
+        global Bemail
+        global Cemail
+        global Demail
+        global Eemail
+        global login
+        global password
+        Aemail = email1_var.get()
+        Bemail = email2_var.get()
+        Cemail = email3_var.get()
+        Demail = email4_var.get()
+        Eemail = email5_var.get()
+        login = login_var.get()
+        password = password_var.get()
+        config_object = ConfigParser()
+        config_object["Emails"] = {
+            "email1": Aemail,
+            "email2": Bemail,
+            "email3": Cemail,
+            "email4": Demail,
+            "email5": Eemail
+        }
+        config_object["login"] = {
+            "email": login,
+        }
+        
+        if os.path.exists('config.ini'):
+            os.remove('config.ini')
+            
+        def config_write(config_object):
+            with open('config.ini', 'w') as conf:
+                config_object.write(conf)
+        config_write(config_object)
+            
+        if os.path.exists('password.txt'):
+            os.remove('password.txt')
+  
+        time.sleep(3)  
+        def password_write(password):
+            with open('password.txt', 'w') as f:
+                f.write(password)
+        password_write(password)
+        encrypt()
+        root.destroy()
+        start(run)
+        
+        
+        
+        
+
+    root = tk.Tk()
+    root.title("Setup")
+    root.geometry("400x300")
+
+    email1_var = tk.StringVar()
+    email2_var = tk.StringVar()
+    email3_var = tk.StringVar()
+    email4_var = tk.StringVar()
+    email5_var = tk.StringVar()
+    login_var = tk.StringVar()
+    password_var = tk.StringVar()
+
+    entry = tk.Entry(root, textvariable=email1_var)
+    email1_label = tk.Label(root, text="Email 1: ")
+    email1_entry = tk.Entry(root, textvariable=email1_var)
+    email2_label = tk.Label(root, text="Email 2: ")
+    email2_entry = tk.Entry(root, textvariable=email2_var)
+    email3_label = tk.Label(root, text="Email 3: ")
+    email3_entry = tk.Entry(root, textvariable=email3_var)
+    email4_label = tk.Label(root, text="Email 4: ")
+    email4_entry = tk.Entry(root, textvariable=email4_var)
+    email5_label = tk.Label(root, text="Email 5: ")
+    email5_entry = tk.Entry(root, textvariable=email5_var)
+    login_label = tk.Label(root, text="Skol e-post: ")
+    login_entry = tk.Entry(root, textvariable=login_var)
+    password_label = tk.Label(root, text="Lösenord: ")
+    password_entry = tk.Entry(root, textvariable=password_var, show="*")
+    submit_button = tk.Button(root, text="Submit", command=lambda: submit(start, run))
+
+
+    email1_label.grid(row=0, column=0, padx=5, pady=5)
+    email1_entry.grid(row=0, column=1, padx=5, pady=5)
+    email2_label.grid(row=1, column=0, padx=5, pady=5)
+    email2_entry.grid(row=1, column=1, padx=5, pady=5)
+    email3_label.grid(row=2, column=0, padx=5, pady=5)
+    email3_entry.grid(row=2, column=1, padx=5, pady=5)
+    email4_label.grid(row=3, column=0, padx=5, pady=5)
+    email4_entry.grid(row=3, column=1, padx=5, pady=5)
+    email5_label.grid(row=4, column=0, padx=5, pady=5)
+    email5_entry.grid(row=4, column=1, padx=5, pady=5)
+    login_label.grid(row=5, column=0, padx=5, pady=5)
+    login_entry.grid(row=5, column=1, padx=5, pady=5)
+    password_label.grid(row=6, column=0, padx=5, pady=5)
+    password_entry.grid(row=6, column=1, padx=5, pady=5)
+    submit_button.grid(row=7, column=1, padx=5, pady=5)
+
+    root.mainloop()
+    
+    
+start(run)

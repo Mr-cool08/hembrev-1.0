@@ -587,7 +587,7 @@ class Application(tk.Frame):
 
             self.hkk_note = tk.Entry(self)
             self.hkk_note.grid(row=9, column=3)
-            self.hkk_note.bind("<Return>", self.focus_next_widget)
+            self.hkk_note.bind("<Return>", lambda event: self.sp_gör.focus_set())
             
             self.sp_label = tk.Label(self, text="Språk")
             self.sp_label.grid(row=10, column=0, sticky="w")

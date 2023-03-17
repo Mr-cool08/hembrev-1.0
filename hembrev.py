@@ -20,6 +20,7 @@ wk = dt.isocalendar()[1]
 
 
 
+
     
     
 
@@ -30,6 +31,7 @@ class Application(tk.Frame):
         self.grid()
         self.create_widgets()
     
+    #mark these as empty if the user dont input    
     #mark these as empty if the user dont input    
     händelse_vad1 = ""
     händelse_när1 = ""
@@ -47,12 +49,15 @@ class Application(tk.Frame):
     rest_hur3 = ""
     rest_när3 = ""
     #when pressed tab next input
+    #when pressed tab next input
     def focus_next_widget(self, event):
         event.widget.tk_focusNext().focus()
     
     
     #encrypt and decrypt for the password
+    #encrypt and decrypt for the password
     def encrypt(self):
+        c = SymmetricCipher(password="Super secret password")
         c = SymmetricCipher(password="Super secret password")
         try:
             c.encrypt_file("password.txt")
@@ -61,6 +66,7 @@ class Application(tk.Frame):
             os.remove("password-encrypted.txt")
     def decrypt(self):
         c = SymmetricCipher(password="Super secret password")
+        c = SymmetricCipher(password="Super secret password")
         try:
             c.decrypt_file("password-encrypted.txt")
             os.remove("password-encrypted.txt")
@@ -68,6 +74,7 @@ class Application(tk.Frame):
             pass
     
 
+    #if the user want to send something in the mail
     #if the user want to send something in the mail
     def mail_message(self):
         self.title_label = tk.Label(self, text="Skriv här vad som ska stå i mailet")
@@ -84,6 +91,7 @@ class Application(tk.Frame):
 
 
 
+    #if the user have any rester
     #if the user have any rester
     def rest(self):
             
@@ -138,6 +146,7 @@ class Application(tk.Frame):
         tk.Entry.pack(self)
         
         
+    #if the user have anything that is going to happen    
     #if the user have anything that is going to happen    
     def händelser(self):
             
@@ -203,6 +212,7 @@ class Application(tk.Frame):
         row_cells[1].text = armatte
         row_cells[2].text = lermatte
         row_cells[3].text = notematte
+        
         
         arsv = self.sv_gör.get()
         lersv = self.sv_lärt.get()
@@ -295,6 +305,7 @@ class Application(tk.Frame):
         row_cells[3].text = notesl
         
     
+    
         document.add_heading('Händelser', 0)
         table = document.add_table(rows=1, cols=2)
         table.style = 'Table Grid'
@@ -302,8 +313,10 @@ class Application(tk.Frame):
         hdr_cells[0].text = 'Vad'
         hdr_cells[1].text = 'När'
         #only if the checkbox is checked it inputs it else it will just be empty
+        #only if the checkbox is checked it inputs it else it will just be empty
         if self.händelser_checked.get():
             händelse_vad1 = self.händelse_vad1.get()
+            händelse_när1 = self.händelse_när1.get() 
             händelse_när1 = self.händelse_när1.get() 
             row_cells = table.add_row().cells
             row_cells[0].text = händelse_vad1
@@ -356,6 +369,7 @@ class Application(tk.Frame):
 
 
         #saving the document with the week number
+        #saving the document with the week number
         document.save(f'Hembrev v{wk}.docx')
         
     
@@ -381,6 +395,7 @@ class Application(tk.Frame):
                 password = file.read()
 
             #making the email
+            #making the email
             docname = 'hembrev v' + str(wk) + ".docx"
             msg = MIMEMultipart()
             msg['From'] = mail
@@ -397,6 +412,7 @@ class Application(tk.Frame):
             msg.attach(part)
 
             #sending the mail with a office 365 server
+            #sending the mail with a office 365 server
             server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
             server.ehlo()
             server.starttls()
@@ -405,6 +421,7 @@ class Application(tk.Frame):
             server.send_message(msg)
             server.quit()
             self.encrypt()
+    #when the user presses the sumbit button
     #when the user presses the sumbit button
     def submit(self):
         if self.mail_message_checked.get() == 1:
@@ -421,6 +438,7 @@ class Application(tk.Frame):
     #create_widgets is where all the visual stuff is
     def create_widgets(self):
         #labels so the user know where to input what
+        #labels so the user know where to input what
         self.title_label = tk.Label(self, text="Vad gör du?")
         self.title_label.grid(row=0, column=1, pady=10, sticky="w")
         self.title_label = tk.Label(self, text="Vad lär du dig?")
@@ -429,6 +447,7 @@ class Application(tk.Frame):
         self.title_label.grid(row=0, column=3, columnspan=7, pady=10, sticky="w")
 
 
+        #the input boxes for the subjects
         #the input boxes for the subjects
         def questions(self):
             self.matte_label = tk.Label(self, text="Matte")
@@ -603,6 +622,7 @@ class Application(tk.Frame):
         
 
         #buttons and checkboxes
+        #buttons and checkboxes
         self.rest_checked = tk.IntVar()
         self.add_fields_checkbox = tk.Checkbutton(self, text="Har du några rester?", variable=self.rest_checked, command=self.rest)
         self.add_fields_checkbox.grid(row=48, column=0)
@@ -619,8 +639,11 @@ class Application(tk.Frame):
         self.submit_button.grid(row=50, column=1, columnspan=3, pady=10)
 
 # creating the window
+
+# creating the window
 root = tk.Tk()
 root.state('zoomed')
+#if user presses the X the program confirms it
 #if user presses the X the program confirms it
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):

@@ -10,7 +10,7 @@ import os
 
 from tqdm import tqdm
 from windtalker import SymmetricCipher
-import os
+
 import zipfile
 import sys
 import shutil

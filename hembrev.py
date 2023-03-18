@@ -1,28 +1,20 @@
-import tkinter as tk
 from tkinter import ttk
 from docx import Document
 import datetime
 import smtplib
-import datetime
 from tkinter import messagebox
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
-import configparser
 from windtalker import SymmetricCipher
 import os
 import random
 import tkinter as tk
-from tkinter import messagebox
 from configparser import ConfigParser
 from cryptography.fernet import Fernet
 import time
 import requests
-import os
-from tqdm import tqdm
-from windtalker import SymmetricCipher
-import os
 import zipfile
 import sys
 import shutil

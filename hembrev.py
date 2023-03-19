@@ -694,13 +694,22 @@ def run(Application):
     app.mainloop()
     
 def start(run):
-    filename = "firstime.txt"
-    if os.path.exists(filename):
-        run(Application)
+    def connect(host='http://google.com'):
+        try:
+            urllib.request.urlopen(host) #Python 3.x
+            return True
+        except:
+            return False
+    if connect():
+        filename = "firstime.txt"
+        if os.path.exists(filename):
+            run(Application)
+        else:
+            with open(filename, 'w') as file:
+                file.write('This file is only so the program knows if its the first time. DO NOT DELETE')
+                setup(start , run)
     else:
-        with open(filename, 'w') as file:
-            file.write('This file is only so the program knows if its the first time. DO NOT DELETE')
-            setup(start , run)
+        messagebox.showerror("Error", "Du behöver internet för att programmet ska funka")
     
     
     

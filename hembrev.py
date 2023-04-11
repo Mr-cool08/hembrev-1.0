@@ -743,6 +743,7 @@ def start(run):
             return True
         except:
             return False
+        
     if connect():
         filename = "firstime.txt"
         if os.path.exists(filename):

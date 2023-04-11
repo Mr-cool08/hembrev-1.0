@@ -1,7 +1,9 @@
 from tkinter import ttk
 from docx import Document
 import datetime
+import socket
 import smtplib
+import logging
 from tkinter import messagebox
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -391,9 +393,15 @@ class Application(tk.Frame):
             row_cells[2].text = rest_när3
 
 
-       
+        path = os.path.expanduser('~')
+        path1 = path + "\\hembrev\\"
+        if os.path.isdir(path1):
+            pass
+        else:
+            os.mkdir(path1)
+            
         #saving the document with the week number
-        document.save(f'Hembrev v{wk}.docx')
+        document.save(fr'{path1}Hembrev v{wk}.docx')
         
     
     def sendmail(self, message):
@@ -436,12 +444,43 @@ class Application(tk.Frame):
 
             #sending the mail with a office 365 server
             #sending the mail with a office 365 server
-            
-            server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
+            try:
+                server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
+            except (smtplib.SMTPSenderRefused, socket.gaierror) as e:
+                messagebox.showerror("Error", f"Du har blivit bort kopplad från internet så kan inte komma åt serverar \n {e}")
+                logging.error('An error occurred: %s', e)
+                path = os.path.expanduser('~')
+                path1 = path + "\\hembrev\\"
+                path = os.path.realpath(path1)
+                os.startfile(path)
+
+            except Exception as e:
+                messagebox.showerror("Error", f"Error kontakta Liam Suorsa \n {e}")
+                logging.error('An error occurred: %s', e)
+                path = os.path.expanduser('~')
+                path1 = path + "\\hembrev\\"
+                path = os.path.realpath(path1)
+                os.startfile(path)
             server.ehlo()
             server.starttls()
             server.ehlo()
-            server.login(mail, password)  ### if applicable
+            try:
+                server.login(mail, password) 
+            except smtplib.SMTPAuthenticationError as e:
+                messagebox.showerror("Error", f"Du har skrivit fel inloggnings uppgifter starta programmet igen och tryck på ändra epost \n {e}")
+                logging.error('An error occurred: %s', e)
+                path = os.path.expanduser('~')
+                path1 = path + "\\hembrev\\"
+                path = os.path.realpath(path1)
+                os.startfile(path)
+            except Exception as e:
+                messagebox.showerror("Error", f"Error kontakta Liam Suorsa \n {e}")
+                logging.error('An error occurred: %s', e)
+                path = os.path.expanduser('~')
+                path1 = path + "\\hembrev\\"
+                path = os.path.realpath(path1)
+                os.startfile(path)
+            ### if applicable
             server.send_message(msg)
             server.quit()
             self.encrypt()
@@ -696,6 +735,8 @@ def run(Application):
     app.mainloop()
     
 def start(run):
+    logging.basicConfig(filename='error.log', level=logging.ERROR,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
     def connect(host='http://google.com'):
         try:
             urllib.request.urlopen(host) #Python 3.x
@@ -712,6 +753,7 @@ def start(run):
                 setup(start , run)
     else:
         messagebox.showerror("Error", "Du behöver internet för att programmet ska funka")
+        logging.info('User didnt have internet')
     
     
     

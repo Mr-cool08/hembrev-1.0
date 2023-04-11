@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from email import encoders
 from windtalker import SymmetricCipher
 import os
+import configparser
 import random
 import tkinter as tk
 from configparser import ConfigParser
@@ -435,6 +436,7 @@ class Application(tk.Frame):
 
             #sending the mail with a office 365 server
             #sending the mail with a office 365 server
+            
             server = smtplib.SMTP('smtp.office365.com', 587)  ### put your relevant SMTP here
             server.ehlo()
             server.starttls()
